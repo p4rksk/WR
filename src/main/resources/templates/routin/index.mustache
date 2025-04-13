@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>루틴 메인 페이지</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #f9f9f9;
+      font-family: 'Apple SD Gothic Neo', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .layout {
+      display: flex;
+    }
+    .sidebar {
+      width: 265px;
+      height: 100vh;
+      background-color: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      left: 0;
+      top: 0;
+      padding: 1rem;
+    }
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 0.5rem 0;
+      text-decoration: none;
+    }
+    .sidebar nav a:hover,
+    .sidebar nav a.active {
+      background-color: #2ecc71;
+      border-radius: 0.5rem;
+      padding-left: 1rem;
+    }
+    .sidebar .profile {
+      border-top: 1px solid #444;
+      padding-top: 1rem;
+      margin-top: 2rem;
+    }
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 0.5rem;
+    }
+    .friend-list {
+      color:white; 
+      font-size: 14px;
+    }
+
+    .main {
+      margin-left: 260px;
+      padding: 2rem;
+      width: 100%;
+    }
+    .chart-row {
+      display: flex;
+      gap: 5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    
+    .chart-box {
+      width: 200% !important;
+      max-width: 400px;
+      height: clamp(200px, 30vw, 300px) !important;
+      aspect-ratio: 1.5 !important;
+      display: flex;
+      gap: 0.2rem;
+      
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .chart-box canvas {
+      width: 90% !important;
+      height: 80% !important;
+      max-height: 80% !important;
+    }
+    .calendar-wrapper, .routine-list {
+      background: white;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .calendar-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+    .calendar-cell {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background-color: #fff;
+      border-radius: 8px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .calendar-cell.has-routine {
+      background-color: #e8f5e9;
+      font-weight: bold;
+    }
+    .dot {
+      font-size: 12px;
+      color: #2ecc71;
+      margin-top: 4px;
+    }
+    .profile-dropdown {
+      position: relative;
+    }
+    .profile-dropdown button {
+      background: none;
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+    }
+    .profile-dropdown .dropdown-menu {
+      position: absolute;
+      bottom: 40px;
+      background-color: #222;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      display: none;
+    }
+    .profile-dropdown:hover .dropdown-menu {
+      display: block;
+    }
+    .routine-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .routine-list li {
+      border: 1px solid #ddd;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fefefe;
+    }
+    .week-rouine {
+      text-decoration: none;
+      color: inherit;  
+    }
+    .routine-item {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <h4>루틴 관리</h4>
+        <nav>
+          <a href="" class="active">홈</a>
+          <div class="dropdown-section">
+            <div class="dropdown-toggle" onclick="toggleTeamList()">
+              팀 피드
+            </div>
+            <div id="teamList" style="display: none; padding-left: 1rem;">
+              <button class="btn btn-outline-light btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#teamAddModal">+ 팀 추가</button>
+              <ul style="list-style: none; padding-left: 0;">
+                <li><a href="" class="text-white text-decoration-none">💼 코딩팀</a></li>
+                <li><a href="" class="text-white text-decoration-none">🚴 운동메이트</a></li>
+              </ul>
+            </div>
+          </div>        
+        </nav>
+      </div>
+      <div class="bg-dark text-white p-3 rounded mt-auto mx-2" style="font-size: 0.9rem;">
+        친구를 초대하고<br>팀을 만들어보세요!
+        <button class="btn btn-light btn-sm mt-2 w-100" data-bs-toggle="modal" data-bs-target="#friendModal">+ 친구 추가</button>
+      </div>
+      <div class="profile profile-dropdown">
+        <button>
+          <img src="https://github.com/mdo.png" alt="프로필"> 선규 
+        </button>
+        <div class="dropdown-menu">
+          <a href="" style="color:white; text-decoration:none; display:block;">Profile</a>
+          <a href="" style="color:white; text-decoration:none; display:block;">Sign out</a>
+          <hr style="border-color: #333;">
+            <div class="friend-list">
+              <strong>👥 친구 목록</strong>
+              <ul style="list-style: none; padding-left: 0; margin-top: 0.5rem;">
+                <li>- 이지훈 </li>
+                <li>- 홍길동 </li>
+                <li>- 김개발 </li>
+              </ul>
+            </div>
+          <hr style="border-color: #333;" />
+          <button type="button" data-bs-toggle="modal" data-bs-target="#friendModal">+ 친구 추가</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 루틴 메인 페이지 컨텐츠 -->
+    <main class="main">
+      <div class="chart-row">
+        <div class="chart-box">
+          <h6>오늘 루틴 달성률</h6>
+          <canvas id="dailyChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h6>주간 루틴 달성률</h6>
+          <canvas id="weeklyChart"></canvas>
+        </div>
+      </div>
+      <div class="calendar-wrapper">
+        <div class="calendar-controls">
+          <button class="btn btn-outline-success btn-sm" onclick="changeMonth(-1)">◀ 이전</button>
+          <div id="currentMonth" class="fw-bold fs-5"></div>
+          <button class="btn btn-outline-success btn-sm" onclick="changeMonth(1)">다음 ▶</button>
+        </div>
+        <div class="calendar-grid" id="calendar-body"></div>
+      </div>
+      <div class="routine-list">
+        <h6>이번 주 루틴 요약</h6>
+        <ul class="list-group">
+          <li class="d-flex justify-content-between align-items-start py-3 border-bottom">
+            <a href="" class="week-routine text-decoration-none text-dark w-100">
+              <div class="routine-item">
+                <div class="d-flex align-items-center mb-1">
+                  <i class="bi bi-calendar3 me-2 text-muted"></i>
+                  <strong class="me-3 text-muted">2025-04-03</strong>
+                </div>
+                <div class="fw-semibold mb-1">아침 스트레칭</div>
+                 <div class="d-flex align-items-center small text-muted">
+                   <span class="badge bg-success me-2">운동</span>
+                 </div>
+              </div>
+            </a>
+            <input type="checkbox" class="form-check-input ms-2 mt-1" />
+          </li>
+        </ul>
+      </div>  
+    </main>
+  </div>    
+
+     <!--  루틴 리스트 모달 -->
+    <div class="modal fade" id="routine-list-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id = "checkDate"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="routine-list"></div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-target="#routine_save_modal" data-bs-toggle="modal" data-bs-dismiss="modal"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  
+  <!--  루틴 등록 모달 -->
+  <div class="modal fade" id="routine_save_modal" tabindex="-1" aria-labelledby="routine_save_modal_label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="routine_save_modal_label">루틴 등록</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <div id="multi-category-buttons" class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-success btn-sm" data-category="운동">🏃 운동</button>
+                <button type="button" class="btn btn-outline-success btn-sm" data-category="공부">📚 자기 개발</button>
+                <button type="button" class="btn btn-outline-success btn-sm" data-category="명상">🧘 수면</button>
+                <button type="button" class="btn btn-outline-success btn-sm" data-category="식단">🥗 식단</button>
+              </div>
+              <input type="hidden" id="selected-categories" name="categories">
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">title</label>
+              <input type="text" class="form-control" id="recipient-name">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">content</label>
+              <textarea class="form-control" id="message-text"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="sendRoutine">Routine Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 친구추가 모달 -->
+  <div class="modal fade" id="friendModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">친구 추가</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="email" id="friendEmail" class="form-control mb-2" placeholder="친구 이메일 입력">
+          <button class="btn btn-success w-100" onclick="searchFriend()">검색</button>
+          <div id="friendResult" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- 팀 추가 모달 -->
+  <div class="modal fade" id="teamAddModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content p-3">
+        <div class="modal-header">
+          <h5 class="modal-title">팀 생성 및 초대</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="teamNameInput" class="form-label">팀 이름</label>
+            <input type="text" class="form-control" id="teamNameInput" placeholder="예: 런칭팀, 코딩메이트" />
+          </div>
+          <div class="mb-3">
+            <label for="friendSearchInput" class="form-label">친구 이메일 검색</label>
+            <div class="input-group">
+              <input type="email" class="form-control" id="friendSearchInput" placeholder="친구 이메일 입력" />
+              <button class="btn btn-outline-success" type="button" onclick="searchFriend()">검색</button>
+            </div>
+          </div>
+          <div id="searchResult" class="mt-2"></div>
+          <div>
+            <label class="form-label">초대할 친구</label>
+            <ul id="inviteList" class="list-group small"></ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          <button class="btn btn-success" onclick="submitTeam()">팀 생성</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+   
+    // 일간 차트 JS
+    const daily = document.getElementById('dailyChart');
+    new Chart(daily, {
+      type: 'doughnut',
+      data: {
+        labels: ['달성', '미달성'],
+        datasets: [{ data: [70, 30], backgroundColor: ['#2ecc71', '#ecf0f1'] }]
+      },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
+    });
+
+    //주간 차트 JS
+    const weekly = document.getElementById('weeklyChart');
+    new Chart(weekly, {
+      type: 'bar',
+      data: {
+        labels: ['일','월','화','수','목','금','토'],
+        datasets: [{ label: '달성률 %', data: [50, 30, 60, 55, 70, 40, 90], backgroundColor: '#2ecc71' }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: { y: { beginAtZero: true, max: 100 } }
+      }
+    });
+
+    const routinList = {
+      "2025-04-03": [ { title: "아침 스트레칭", category: "운동" } ],
+      "2025-04-06": [ { title: "영어 단어 암기", category: "공부" }, { title: "밤 명상", category: "명상" } ]
+    };
+
+    // 팀 피드 JS
+    function toggleTeamList() {
+      const list = document.getElementById("teamList");
+
+      const isVisble = list.style.display === "block";
+      list.style.display = isVisble? "none" : "block";
+    }
+    
+  
+    // 달력 JS
+    let currentDate = new Date();
+    function renderCalendar(year, month) {
+      const calendar = document.getElementById("calendar-body");
+      const monthLabel = document.getElementById("currentMonth");
+      calendar.innerHTML = "";
+      const firstDay = new Date(year, month, 1);
+      const startDay = firstDay.getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+      monthLabel.innerText = `${year}년 ${month + 1}월`;
+
+      for (let i = 0; i < startDay; i++) {
+        calendar.innerHTML += `<div class="calendar-cell"></div>`;
+      }
+      for (let d = 1; d <= lastDate; d++) {
+        const fullDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const hasRoutine = routinList[fullDate];
+        calendar.innerHTML += `
+          <div class="calendar-cell ${hasRoutine ? 'has-routine' : ''}" onclick="showRoutines('${fullDate}')">
+            <div>${d}</div>
+            ${hasRoutine ? '<div class="dot">●</div>' : ''}
+          </div>
+        `;
+      }
+    }
+
+    // 달력 날짜 변경 JS
+    function changeMonth(offset) {
+      currentDate.setMonth(currentDate.getMonth() + offset);
+      renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    }
+
+   
+
+    // 루틴 목록 JS
+    function showRoutines(date) {
+    const routines = routinList[date] || [];
+
+    document.getElementById("checkDate").innerText = `${date} 루틴 (${routines.length}개)`;
+
+    const list = routines.map((r, i) => `
+      <li onclick="goToDetail('${date}', ${i})" style="cursor: pointer;">
+        <strong>${r.title}</strong> <small class="text-muted">(${r.category})</small>
+      </li>
+    `).join('\n');
+
+    document.getElementById("routine-list").innerHTML = `<ul>${list || '<li>루틴 없음</li>'}</ul>`;
+
+    new bootstrap.Modal(document.getElementById('routine-list-modal')).show();
+    }
+
+  // 루틴 상세보기 이동 JS
+    function goToDetail(date, id) {
+    const url = `/routine/detail?date=${date}&id=${id}`;
+    window.location.href = url;
+   }
+
+
+    // 여러 카테고리 선택 JS
+    const selectedCategories = new Set(); 
+
+    document.querySelectorAll('#multi-category-buttons .btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = btn.getAttribute('data-category');
+      
+        if (selectedCategories.has(category)) {
+          selectedCategories.delete(category);
+          btn.classList.remove('active');
+        } else {
+          selectedCategories.add(category);
+          btn.classList.add('active');
+        }
+      
+        document.getElementById('selected-categories').value = [...selectedCategories].join(',');
+      });
+    });
+
+    
+    // 루틴 등록 JS
+    document.getElementById("sendRoutine").addEventListener("click", () => {
+      const category = document.getElementById("selected-categories").value;
+      const title = document.getElementById("recipient-name").value;
+      const content = document.getElementById("message-text").value;
+
+      if (!category || !title || !content) {
+        alert("모든 필드를 채워주세요!");
+        return;
+      }
+    
+      const saveModal = bootstrap.Modal.getInstance(document.getElementById('routine_save_modal'));
+      saveModal.hide();
+    
+      const listModal = new bootstrap.Modal(document.getElementById('routine-list-modal'));
+      listModal.show();
+    });
+
+    renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+
+  </script>
+</body>
+</html>
