@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>루틴 상세 페이지</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #f9f9f9;
+        font-family: "Apple SD Gothic Neo", sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 265px;
+        height: 100vh;
+        background-color: #111;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: fixed;
+        left: 0;
+        top: 0;
+        padding: 1rem;
+      }
+      .sidebar nav a {
+        display: block;
+        color: white;
+        padding: 0.5rem 0;
+        text-decoration: none;
+      }
+      .sidebar nav a:hover,
+      .sidebar nav a.active {
+        background-color: #2ecc71;
+        border-radius: 0.5rem;
+        padding-left: 1rem;
+      }
+      .sidebar .profile {
+        border-top: 1px solid #444;
+        padding-top: 1rem;
+        margin-top: 2rem;
+      }
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 0.5rem;
+      }
+      .profile-dropdown {
+        position: relative;
+      }
+
+      .profile-dropdown .dropdown-menu {
+        position: absolute;
+        bottom: 40px;
+        background-color: #222;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        display: none;
+      }
+      .profile-dropdown:hover .dropdown-menu {
+        display: block;
+      }
+      .profile-dropdown button {
+        background: none;
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+      }
+      .friend-list {
+        color: white;
+        font-size: 14px;
+      }
+      .container {
+        max-width: 100% !important;
+
+        padding: 2rem;
+        margin-left: 265px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div>
+          <h4>루틴 관리</h4>
+          <nav>
+            <a href="index.mustache" class="active">홈</a>
+            <div class="dropdown-section">
+              <div class="dropdown-toggle" onclick="toggleTeamList()">
+                팀 피드
+              </div>
+              <div id="teamList" style="display: none; padding-left: 1rem">
+                <button
+                  class="btn btn-outline-light btn-sm mb-2"
+                  data-bs-toggle="modal"
+                  data-bs-target="#teamAddModal"
+                >
+                  + 팀 추가
+                </button>
+                <ul style="list-style: none; padding-left: 0">
+                  <li>
+                    <a href="/team/1" class="text-white text-decoration-none"
+                      >💼 코딩팀</a
+                    >
+                  </li>
+                  <li>
+                    <a href="/team/2" class="text-white text-decoration-none"
+                      >🚴 운동메이트</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+        <div
+          class="bg-dark text-white p-3 rounded mt-auto mx-2"
+          style="font-size: 0.9rem"
+        >
+          친구를 초대하고<br />팀을 만들어보세요!
+          <button
+            class="btn btn-light btn-sm mt-2 w-100"
+            data-bs-toggle="modal"
+            data-bs-target="#friendModal"
+          >
+            + 친구 추가
+          </button>
+        </div>
+        <div class="profile profile-dropdown">
+          <button>
+            <img src="https://github.com/mdo.png" alt="프로필" /> 선규
+          </button>
+          <div class="dropdown-menu">
+            <a
+              href="#"
+              style="color: white; text-decoration: none; display: block"
+              >Profile</a
+            >
+            <a
+              href="#"
+              style="color: white; text-decoration: none; display: block"
+              >Sign out</a
+            >
+            <hr style="border-color: #333" />
+            <div class="friend-list">
+              <strong>👥 친구 목록</strong>
+              <ul style="list-style: none; padding-left: 0; margin-top: 0.5rem">
+                <li>- 이지훈</li>
+                <li>- 홍길동</li>
+                <li>- 김개발</li>
+              </ul>
+            </div>
+            <hr style="border-color: #333" />
+            <button
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#friendModal"
+            >
+              + 친구 추가
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ✅ 루틴 마이이 페이지 -->
+      <main class="container my-4">
+        <div class="card p-4 shadow-sm">
+          <h4 class="mb-4 text-center">👤 마이페이지</h4>
+      
+          <!-- 🔹 상단 메뉴 탭 -->
+          <div class="btn-group mb-4 w-100" role="group">
+            <button class="btn btn-outline-primary active" onclick="showSection('routine')">내 루틴 보기</button>
+            <button class="btn btn-outline-primary" onclick="showSection('feedback')">피드백 보기</button>
+            <button class="btn btn-outline-primary" onclick="showSection('team')">팀 활동 요약</button>
+          </div>
+      
+          <!-- 🔹 내 루틴 전체 보기 -->
+          <section id="section-routine">
+            <h5>📅 내 루틴 전체 보기</h5>
+            <table class="table table-hover mt-3">
+              <thead>
+                <tr>
+                  <th>제목</th>
+                  <th>카테고리</th>
+                  <th>등록일</th>
+                  <th>완료 여부</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>아침 스트레칭</td>
+                  <td>운동</td>
+                  <td>2025-04-15</td>
+                  <td><span class="badge text-bg-success">완료</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+      
+          <!-- 🔹 피드백 보기 -->
+          <section id="section-feedback" style="display: none">
+            <h5>💬 피드백 보기</h5>
+            <div class="btn-group mb-3" role="group">
+              <button class="btn btn-outline-secondary active" onclick="toggleFeedback('sent')">내가 남긴 피드백</button>
+              <button class="btn btn-outline-secondary" onclick="toggleFeedback('received')">내가 받은 피드백</button>
+            </div>
+      
+            <div id="feedback-sent">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <strong>코딩 루틴</strong> 에 남긴 코멘트:<br />"어제보다 효율 좋았음!"
+                </li>
+              </ul>
+            </div>
+      
+            <div id="feedback-received" style="display: none">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <strong>운동 루틴</strong> 에 팀원이 남긴 코멘트:<br />"꾸준히 하시는 모습 멋져요!"
+                </li>
+              </ul>
+            </div>
+          </section>
+      
+          <!-- 🔹 팀별 활동 요약 -->
+          <section id="section-team" style="display: none">
+            <h5>🧑‍🤝‍🧑 팀별 활동 요약</h5>
+            <ul class="list-group mt-3">
+              <li class="list-group-item">
+                <strong>코딩팀</strong> - 참여 루틴 12개 / 완료율 83%
+              </li>
+              <li class="list-group-item">
+                <strong>운동메이트</strong> - 참여 루틴 8개 / 완료율 100%
+              </li>
+            </ul>
+          </section>
+        </div>
+      </main>      
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function showSection(section) {
+    const sections = ["routine", "feedback", "team"];
+    sections.forEach(id => {
+      document.getElementById(`section-${id}`).style.display = id === section ? "block" : "none";
+    });
+
+    const buttons = document.querySelectorAll(".btn-group button");
+    buttons.forEach(btn => btn.classList.remove("active"));
+    document.querySelector(`[onclick="showSection('${section}')"]`).classList.add("active");
+  }
+      
+    </script>
+  </body>
+</html>
