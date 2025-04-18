@@ -1,4 +1,4 @@
-package com.wr.wr;
+package com.wr;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
