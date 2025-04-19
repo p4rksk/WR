@@ -34,16 +34,16 @@ public class Routine {
     @Column(nullable=false)
     private LocalDate duedate;
 
-    @Column(nullabe=false)
+    @Column(nullable=false)
     private Boolean isPublic = false; // false == 개인
     
-    @Column(nullabe=true)
+    @Column(nullable=true)
     private String imgName;
 
-    @Column(nullabe=true)
+    @Column(nullable=true)
     private String imgPath;
 
-    @Column(nullabe=true)
+    @Column(nullable=true)
     private String comment;
 
     @Column(nullable=false)
