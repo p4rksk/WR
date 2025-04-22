@@ -1,7 +1,5 @@
 package com.wr.routine_category;
 
-import java.util.Locale.Category;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.wr.routine.Routine;
@@ -35,15 +33,15 @@ public class RoutineCategory {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable=false)
-    private Category category;
+    private com.wr.category.Category category;
 
     @Builder
-    public RoutineCategory(Long id, Routine routine, Category category) {
+    public RoutineCategory(Long id, Routine routine, com.wr.category.Category category) {
         this.id = id;
         this.routine = routine;
         this.category = category;
     }
 
     
-
+    
 }

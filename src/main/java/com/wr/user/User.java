@@ -3,7 +3,6 @@ package com.wr.user;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,18 +21,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Data
-@Table(name =  "user")
+@Table(name =  "user_tb")
 @EntityListeners(AuditingEntityListener.class)  // 엔티티 리스너 추가
 public class User {
-    @Id
+    @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String userName;
-
-    @Column(nullable = false, unique = true)
-    private String email;
 
     @Column(nullable = false)
     private String passwordHash;
@@ -71,12 +67,11 @@ public class User {
     }
 
     @Builder
-    public User(Long id, String userName, String email, String passwordHash, String nickName, String imgName,
+    public User(Long id, String userName,  String passwordHash, String nickName, String imgName,
             String imgPath, String oauthId, OAuthProvider provider, LocalDateTime joinDate, LocalDateTime createdAt,
             LocalDateTime updatedAt) {
         this.id = id;
         this.userName = userName;
-        this.email = email;
         this.passwordHash = passwordHash;
         this.nickName = nickName;
         this.imgName = imgName;

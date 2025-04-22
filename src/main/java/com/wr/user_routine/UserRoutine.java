@@ -2,7 +2,6 @@ package com.wr.user_routine;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.wr.routine.Routine;
@@ -26,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Table(name =  "user_routine")
 @EntityListeners(AuditingEntityListener.class)  // 엔티티 리스너 추가
 public class UserRoutine {
-    @Id
+    @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
