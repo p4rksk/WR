@@ -10,6 +10,8 @@ import com.wr.user.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,6 +40,7 @@ public class Member {
     @JoinColumn(name = "team_id", nullable=false)
     private Team team;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role; 
 
@@ -50,8 +53,8 @@ public class Member {
     private LocalDateTime updatedAt;
 
     private enum Role {
-        reader,
-        member
+        READER,
+        MEMBER
     }
 
     @Builder

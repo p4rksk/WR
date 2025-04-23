@@ -6,11 +6,16 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.wr.team.Team;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +30,10 @@ public class Routine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", nullable=true)
+    private Team team;
+    
     @Column(nullable=false)
     private String title;
     
@@ -35,7 +44,7 @@ public class Routine {
     private LocalDate duedate;
 
     @Column(nullable=false)
-    private Boolean isPublic = false; // false == 개인
+    private AccessLevel accessLevel;
     
     @Column(nullable=true)
     private String imgName;
@@ -60,15 +69,22 @@ public class Routine {
     @Column(nullable = true)
     private LocalDateTime updatedAt;
 
+     public enum AccessLevel {
+        INDIVIDUAL, 
+        TEAM_PRIVATE, 
+        TEAM_SHARED
+    }
+
     @Builder
-    public Routine(Long id, String title, String content, LocalDate duedate, Boolean isPublic, String imgName,
-            String imgPath, String comment, LocalDateTime registeredAt, LocalDateTime editedAt, LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
+     public Routine(Long id, Team team, String title, String content, LocalDate duedate, AccessLevel accessLevel,
+            String imgName, String imgPath, String comment, LocalDateTime registeredAt, LocalDateTime editedAt,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
+        this.team = team;
         this.title = title;
         this.content = content;
         this.duedate = duedate;
-        this.isPublic = isPublic;
+        this.accessLevel = accessLevel;
         this.imgName = imgName;
         this.imgPath = imgPath;
         this.comment = comment;
@@ -76,8 +92,8 @@ public class Routine {
         this.editedAt = editedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-    }
+     }
 
-    
+     
     
 }
