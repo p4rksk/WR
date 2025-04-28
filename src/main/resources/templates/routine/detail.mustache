@@ -198,9 +198,24 @@
                 <label for="routineContent" class="form-label">루틴 내용</label>
                 <textarea class="form-control" id="routineContent" rows="3">기상 후 10분 스트레칭</textarea>
               </div>
+              <!-- 코멘트 입력 (새로 작성용) -->
               <div class="mb-3">
-                <label class="form-label">코멘트</label>
-                <div class="alert alert-light border rounded px-3 py-2 mb-0 text-muted">오늘 완료 했음.</div>
+                <label for="newComment" class="form-label">코멘트 작성</label>
+                <textarea class="form-control" id="newComment" rows="3" placeholder="오늘 루틴을 완료한 소감을 남겨보세요!"></textarea>
+              </div>
+              
+              <!-- 코멘트 저장 버튼 -->
+              <div class="text-end mb-4">
+                <button class="btn btn-primary" onclick="saveCommentToServer()">코멘트 저장</button>
+              </div>
+              
+              <!-- 기존 코멘트 이력 보여주기 -->
+              <div class="mb-3">
+                <label class="form-label">코멘트 이력</label>
+                <div id="commentHistory" class="border rounded p-3" style="background-color: #fafafa;">
+                  <p class="text-muted">작성된 코멘트가 없습니다.</p>
+                  <!-- 이후 JS로 코멘트들을 추가 -->
+                </div>
               </div>
               <div class="text-end">
                 <button class="btn btn-success" onclick="handleRoutineComplete()">루틴 완료</button>
