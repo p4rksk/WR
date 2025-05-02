@@ -6,7 +6,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.wr.comment.Comment;
 import com.wr.routine.Routine;
+import com.wr.routine_completion.RoutineCompletion;
 import com.wr.user.User;
 
 import jakarta.persistence.Column;
@@ -34,16 +36,25 @@ public class Notification {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reciver_id", nullable=false)
-    private User reciver;
+    @JoinColumn(name = "routine_completion_id", nullable=true)
+    private RoutineCompletion routineCompletion; //  완료 루틴
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reciever_id", nullable=false)
+    private User reciever; //
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable=false)
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routine_id", nullable=false)
-    private Routine routine;
+    @JoinColumn(name = "routine_id", nullable=true)
+    private Routine routine; // 공동 루틴
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routine_id", nullable=true)
+    private Comment comment; // 루틴과 코멘트
+
 
     @Column(nullable = false)
     private Type type;
@@ -63,23 +74,31 @@ public class Notification {
     private LocalDateTime updatedAt;
 
     private enum Type {
-        ROUTINE_COMPLETED,
-        COMMENT_RECEIVED
+        COMPLETE_BASIC,
+        COMPLETE_WITH_COMMENT
     }
 
+    
     @Builder
-    public Notification(Long id, User reciver, User sender, Routine routine, Type type, String message, Boolean is_read,
-            LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Notification(Long id, RoutineCompletion routineCompletion, User reciever, User sender, Routine routine,
+            Comment comment, Type type, String message, Boolean is_read, LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
         this.id = id;
-        this.reciver = reciver;
+        this.routineCompletion = routineCompletion;
+        this.reciever = reciever;
         this.sender = sender;
         this.routine = routine;
+        this.comment = comment;
         this.type = type;
         this.message = message;
         this.is_read = is_read;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+   
+  
+ 
     
     
 
