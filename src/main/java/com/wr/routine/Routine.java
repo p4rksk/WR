@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import com.wr.team.Team;
+import com.wr.user.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +34,11 @@ public class Routine {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable=true)
     private Team team;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable=true)
+    private User user;
+
     
     @Column(nullable=false)
     private String title;
@@ -51,9 +57,6 @@ public class Routine {
 
     @Column(nullable=true)
     private String imgPath;
-
-    @Column(nullable=true)
-    private String comment;
 
     @Column(nullable=false)
     private LocalDateTime registeredAt;
@@ -77,7 +80,7 @@ public class Routine {
 
     @Builder
      public Routine(Long id, Team team, String title, String content, LocalDate duedate, AccessLevel accessLevel,
-            String imgName, String imgPath, String comment, LocalDateTime registeredAt, LocalDateTime editedAt,
+            String imgName, String imgPath, LocalDateTime registeredAt, LocalDateTime editedAt,
             LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.team = team;
@@ -87,7 +90,6 @@ public class Routine {
         this.accessLevel = accessLevel;
         this.imgName = imgName;
         this.imgPath = imgPath;
-        this.comment = comment;
         this.registeredAt = registeredAt;
         this.editedAt = editedAt;
         this.createdAt = createdAt;
