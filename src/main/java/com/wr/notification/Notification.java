@@ -52,7 +52,7 @@ public class Notification {
     private Routine routine; // 공동 루틴
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routine_id", nullable=true)
+    @JoinColumn(name = "comment_id", nullable=true)
     private Comment comment; // 루틴과 코멘트
 
 

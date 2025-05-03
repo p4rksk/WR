@@ -13,14 +13,19 @@ public class RoutineController {
 
 
     @GetMapping("/")
-    public String main() {
+    public String myRoutines() {
         return "routine/index";
     }
 
-    @GetMapping("/routine/{id}/detail")
+    @GetMapping("/routines/{id}/detail")
     public String routineDetail() {
         return "routine/detail";
     }
     
-    
+    // 팀 루틴 화면
+    @GetMapping("/routines/team/{teamId}")
+    public String teamRoutines() {
+        return "routine/team/routine";
+    }
+
 }

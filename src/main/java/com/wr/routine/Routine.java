@@ -36,8 +36,12 @@ public class Routine {
     private Team team;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable=true)
-    private User user;
+    @JoinColumn(name = "creator_id", nullable=true)
+    private User creator; //루틴을 등록한 사용자
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable=false)
+    private User user; //루틴에 등록된 사용자
 
     
     @Column(nullable=false)
@@ -78,12 +82,15 @@ public class Routine {
         TEAM_SHARED
     }
 
+    
     @Builder
-     public Routine(Long id, Team team, String title, String content, LocalDate duedate, AccessLevel accessLevel,
-            String imgName, String imgPath, LocalDateTime registeredAt, LocalDateTime editedAt,
+     public Routine(Long id, Team team, User creator, User user, String title, String content, LocalDate duedate,
+            AccessLevel accessLevel, String imgName, String imgPath, LocalDateTime registeredAt, LocalDateTime editedAt,
             LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.team = team;
+        this.creator = creator;
+        this.user = user;
         this.title = title;
         this.content = content;
         this.duedate = duedate;
@@ -95,6 +102,8 @@ public class Routine {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
      }
+
+     
 
      
     
