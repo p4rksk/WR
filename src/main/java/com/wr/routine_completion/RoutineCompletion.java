@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import com.wr.comment.Comment;
 import com.wr.routine.Routine;
 import com.wr.user.User;
 
@@ -17,7 +16,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
@@ -34,15 +32,11 @@ public class RoutineCompletion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id", nullable=true)
-    private Routine routine;
+    private Routine routine; // 완료 루틴
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable=true)
-    private User user;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", nullable=true)
-    private Comment comment;
+    private User user; // 루틴을 완료한 사용자
 
     @Column(nullable=false)
     private Boolean is_done;
@@ -63,12 +57,11 @@ public class RoutineCompletion {
     private LocalDateTime updatedAt;
 
     @Builder
-    public RoutineCompletion(Long id, Routine routine, User user, Comment comment, Boolean is_done,
+    public RoutineCompletion(Long id, Routine routine, User user,  Boolean is_done,
             LocalDateTime completedAt, LocalDateTime editedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.routine = routine;
         this.user = user;
-        this.comment = comment;
         this.is_done = is_done;
         this.completedAt = completedAt;
         this.editedAt = editedAt;
