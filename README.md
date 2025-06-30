@@ -39,6 +39,8 @@
 ![Spring WebSocket](https://img.shields.io/badge/Spring%20WebSocket-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-FF5722?style=for-the-badge&logo=spring&logoColor=white)
 ![Bootstrap 5](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Toast UI Editor](https://img.shields.io/badge/Toast%20UI%20Editor-2C3E50?style=for-the-badge&logo=toast&logoColor=white)
+
 
 ### DB
 ![H2](https://img.shields.io/badge/H2-005C84?style=for-the-badge&logo=h2&logoColor=white)
